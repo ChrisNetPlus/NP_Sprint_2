@@ -22,5 +22,13 @@ tableextension 50008 "NP Activities Cue Extension" extends "Activities Cue"
             FieldClass = FlowField;
 
         }
+        field(50005; "NP Customer Job Queue"; Integer)
+        {
+            FieldClass = FlowField;
+            CalcFormula = count("Job Queue Entry" where("Object ID to Run" = filter(50403),
+                                                        "Parameter String" = const('Customer')));
+            Caption = 'Cust. Job Queue';
+            Editable = false;
+        }
     }
 }

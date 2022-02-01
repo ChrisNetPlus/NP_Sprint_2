@@ -11,6 +11,13 @@ pageextension 50020 "NP Activities Cue Ext" extends "O365 Activities"
                 DrillDownPageID = "Sales Credit Memos";
                 ApplicationArea = Basic, Suite;
             }
+            field("NP Customer Job Queue"; Rec."NP Customer Job Queue")
+            {
+                Caption = 'Cust. Job Queue';
+                ToolTip = 'Click her to find the Job Queue Entry to Run for Customer Export';
+                DrillDownPageID = "Job Queue Entries";
+                ApplicationArea = Basic, Suite;
+            }
         }
     }
 }
