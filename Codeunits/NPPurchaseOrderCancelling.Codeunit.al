@@ -11,8 +11,11 @@ codeunit 50203 "NP PurchaseOrderCancelling"
         DuplicateReason: Label 'Please enter a Related Order Number';
         Duplicate: Label 'DUPLICATE';
         PurchReleaseCU: Codeunit "Release Purchase Document";
-
+        PurchPayablesSetup: Record "Purchases & Payables Setup";
     begin
+        PurchPayablesSetup.Get();
+        if not PurchPayablesSetup."Enable PO Cancelling" then
+            exit;
         if PurchaseHeader."NP Cancelled" then
             Error(AlreadyCancelled);
         if PurchaseHeader."NP Cancel Reason" = '' then
@@ -70,7 +73,10 @@ codeunit 50203 "NP PurchaseOrderCancelling"
         PurchHeader: Record "Purchase Header";
         CancelledPurchaseLines: Record "NP Cancelled Purchase Lines";
         AlreadyCancelled: Label 'This Order is Not Cancelled';
+        PurchPayablesSetup: Record "Purchases & Payables Setup";
     begin
+        if not PurchPayablesSetup."Enable PO Cancelling" then
+            exit;
         if not PurchaseHeader."NP Cancelled" then
             Error(AlreadyCancelled);
         PurchHeader.Get(PurchaseHeader."Document Type", PurchaseHeader."No.");
@@ -102,4 +108,5 @@ codeunit 50203 "NP PurchaseOrderCancelling"
                 CancelledPurchaseLines.Modify();
             until CancelledPurchaseLines.Next() = 0;
     end;
+
 }

@@ -10,12 +10,14 @@ pageextension 50033 "NP PurchaseOrderExt" extends "Purchase Order"
                 ToolTip = 'Cancelled';
                 ApplicationArea = All;
                 Editable = false;
+                Visible = EnableCancel;
             }
             field("NP Cancel Reason"; Rec."NP Cancel Reason")
             {
                 Caption = 'Cancel Reason';
                 ToolTip = 'Cancel Reason';
                 ApplicationArea = All;
+                Visible = EnableCancel;
             }
             field("NP Cancel Reason Description"; Rec."NP Cancel Reason Description")
             {
@@ -23,12 +25,14 @@ pageextension 50033 "NP PurchaseOrderExt" extends "Purchase Order"
                 ToolTip = 'Cancel Description';
                 ApplicationArea = All;
                 Editable = false;
+                Visible = EnableCancel;
             }
             field("NP Related Order No"; Rec."NP Related Order No")
             {
                 Caption = 'Related Order No.';
                 ToolTip = 'Related Order No.';
                 ApplicationArea = All;
+                Visible = EnableCancel;
             }
         }
     }
@@ -43,6 +47,7 @@ pageextension 50033 "NP PurchaseOrderExt" extends "Purchase Order"
                 ToolTip = 'This will cancel the purchase order';
                 ApplicationArea = All;
                 Promoted = true;
+                Visible = EnableCancel;
 
                 trigger OnAction()
                 var
@@ -60,6 +65,7 @@ pageextension 50033 "NP PurchaseOrderExt" extends "Purchase Order"
                 ToolTip = 'This will uncancel the purchase order';
                 ApplicationArea = All;
                 Promoted = true;
+                Visible = EnableCancel;
 
                 trigger OnAction()
                 var
@@ -83,4 +89,26 @@ pageextension 50033 "NP PurchaseOrderExt" extends "Purchase Order"
             end;
         }
     }
+    trigger OnOpenPage()
+    var
+        PurchPayablesSetup: Record "Purchases & Payables Setup";
+    begin
+        PurchPayablesSetup.Get();
+        if PurchPayablesSetup."Enable PO Cancelling" then
+            EnableCancel := true;
+    end;
+
+    var
+        EnableCancel: Boolean;
+
+    trigger OnDeleteRecord() DeleteRecord: Boolean
+    var
+        PurchPayablesSetup: Record "Purchases & Payables Setup";
+        DeleteError: Label 'You cannot delete an order - please use the Cancel option';
+    begin
+        PurchPayablesSetup.Get();
+        if not PurchPayablesSetup."Enable PO Cancelling" then
+            exit else
+            Error(DeleteError);
+    end;
 }
