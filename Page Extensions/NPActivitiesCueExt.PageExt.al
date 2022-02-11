@@ -18,6 +18,14 @@ pageextension 50020 "NP Activities Cue Ext" extends "O365 Activities"
                 DrillDownPageID = "Job Queue Entries";
                 ApplicationArea = Basic, Suite;
             }
+            field("NP Cancelled POs"; Rec."NP Cancelled POs")
+            {
+                Caption = 'Cancelled POs';
+                ToolTip = 'Click her to find any cancelled purchase orders';
+                DrillDownPageID = "NP Cancelled Purchase Orders";
+                ApplicationArea = Basic, Suite;
+
+            }
         }
     }
 }

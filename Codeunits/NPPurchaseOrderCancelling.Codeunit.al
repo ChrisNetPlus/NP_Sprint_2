@@ -109,4 +109,39 @@ codeunit 50203 "NP PurchaseOrderCancelling"
             until CancelledPurchaseLines.Next() = 0;
     end;
 
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Purch.-Post (Yes/No)", 'OnBeforeConfirmPost', '', false, false)]
+    local procedure CheckUserPostPermission(var HideDialog: Boolean; var PurchaseHeader: Record "Purchase Header")
+    var
+        UserSetup: Record "User Setup";
+        ReceiveLabel: Label 'Receive?';
+        ReceiveError: Label 'Receipt Cancelled';
+    begin
+        if not UserSetup.Get(UserId) then
+            exit;
+        if UserSetup."NP Disallow PO Invoice" then begin
+            HideDialog := true;
+            PurchaseHeader.Invoice := false;
+            if not Confirm(ReceiveLabel, true) then
+                Error(ReceiveError)
+            else
+                PurchaseHeader.Receive := true;
+        end;
+    end;
+
+    [EventSubscriber(ObjectType::Table, Database::"Item Journal Line", 'OnAfterValidateEvent', 'Location Code', false, false)]
+    local procedure CheckAllowedLocations(var Rec: Record "Item Journal Line")
+    var
+        WarehouseEmployee: Record "Warehouse Employee";
+        UserSetup: Record "User Setup";
+        WrongLocation: Label 'This location is not allowed for your user';
+    begin
+        UserSetup.Get(UserId);
+        if UserSetup."NP Depot Worker" then begin
+            WarehouseEmployee.SetRange("User ID", UserId);
+            WarehouseEmployee.SetRange("Location Code", Rec."Location Code");
+            if not WarehouseEmployee.FindFirst() then
+                Error(WrongLocation);
+        end;
+    end;
+
 }

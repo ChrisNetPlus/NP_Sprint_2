@@ -30,5 +30,14 @@ tableextension 50008 "NP Activities Cue Extension" extends "Activities Cue"
             Caption = 'Cust. Job Queue';
             Editable = false;
         }
+        field(50006; "NP Cancelled POs"; Integer)
+        {
+            FieldClass = FlowField;
+            CalcFormula = count("NP Cancelled Purchase Lines");
+            Caption = 'Cancelled POs';
+            Editable = false;
+        }
+
+
     }
 }

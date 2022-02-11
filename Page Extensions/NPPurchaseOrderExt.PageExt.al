@@ -88,6 +88,22 @@ pageextension 50033 "NP PurchaseOrderExt" extends "Purchase Order"
                     Error(AlreadyCancelled);
             end;
         }
+        modify(Print)
+        {
+            Visible = EnablePrint;
+        }
+        modify("&Print")
+        {
+            Visible = EnablePrint;
+        }
+        modify(AttachAsPDF)
+        {
+            Visible = EnablePrint;
+        }
+        modify(SendCustom)
+        {
+            Visible = EnablePrint;
+        }
     }
     trigger OnOpenPage()
     var
@@ -96,10 +112,17 @@ pageextension 50033 "NP PurchaseOrderExt" extends "Purchase Order"
         PurchPayablesSetup.Get();
         if PurchPayablesSetup."Enable PO Cancelling" then
             EnableCancel := true;
+        if PurchPayablesSetup."NP Disallow PO Print" then begin
+            if Rec.Status <> Rec.Status::Released then
+                EnablePrint := false
+            else
+                EnablePrint := true;
+        end;
     end;
 
     var
         EnableCancel: Boolean;
+        EnablePrint: Boolean;
 
     trigger OnDeleteRecord() DeleteRecord: Boolean
     var
