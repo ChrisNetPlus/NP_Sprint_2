@@ -115,9 +115,25 @@ codeunit 50203 "NP PurchaseOrderCancelling"
         UserSetup: Record "User Setup";
         ReceiveLabel: Label 'Receive?';
         ReceiveError: Label 'Receipt Cancelled';
+        WarehouseEmployee: Record "Warehouse Employee";
+        WrongLocation: Label 'This location is not allowed for your user';
+        PurchaseLine: Record "Purchase Line";
     begin
         if not UserSetup.Get(UserId) then
             exit;
+        if UserSetup."NP Depot Worker" then begin
+            PurchaseLine.SetRange("Document Type", PurchaseHeader."Document Type");
+            PurchaseLine.SetRange("Document No.", PurchaseHeader."No.");
+            PurchaseLine.SetRange(Type, PurchaseLine.Type::Item);
+            if PurchaseLine.FindSet() then
+                repeat
+                    WarehouseEmployee.SetRange("User ID", UserId);
+                    WarehouseEmployee.SetRange("Location Code", PurchaseLine."Location Code");
+                    if not WarehouseEmployee.FindFirst() then
+                        Error(WrongLocation);
+                until PurchaseLine.Next = 0;
+        end;
+
         if UserSetup."NP Disallow PO Invoice" then begin
             HideDialog := true;
             PurchaseHeader.Invoice := false;
