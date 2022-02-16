@@ -24,6 +24,13 @@ pageextension 50020 "NP Activities Cue Ext" extends "O365 Activities"
                 ToolTip = 'Click her to find any cancelled purchase orders';
                 DrillDownPageID = "NP Cancelled Purchase Orders";
                 ApplicationArea = Basic, Suite;
+            }
+            field("NP Value Held Orders"; Rec."NP Value Held Orders")
+            {
+                Caption = 'Value Held Orders';
+                ToolTip = 'Click her to find any Value Held purchase orders';
+                DrillDownPageID = "Purchase Order List";
+                ApplicationArea = Basic, Suite;
 
             }
         }

@@ -37,7 +37,14 @@ tableextension 50008 "NP Activities Cue Extension" extends "Activities Cue"
             Caption = 'Cancelled POs';
             Editable = false;
         }
+        field(50007; "NP Value Held Orders"; Integer)
+        {
+            FieldClass = FlowField;
+            CalcFormula = count("Purchase Header" where("NP Value Held" = const(true)));
+            Caption = 'Value Held Orders';
+            Editable = false;
 
+        }
 
     }
 }

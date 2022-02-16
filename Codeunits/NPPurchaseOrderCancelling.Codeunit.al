@@ -132,6 +132,7 @@ codeunit 50203 "NP PurchaseOrderCancelling"
                     if not WarehouseEmployee.FindFirst() then
                         Error(WrongLocation);
                 until PurchaseLine.Next = 0;
+            CheckUserPurchaseLimit(PurchaseHeader);
         end;
 
         if UserSetup."NP Disallow PO Invoice" then begin
@@ -157,6 +158,36 @@ codeunit 50203 "NP PurchaseOrderCancelling"
             WarehouseEmployee.SetRange("Location Code", Rec."Location Code");
             if not WarehouseEmployee.FindFirst() then
                 Error(WrongLocation);
+        end;
+    end;
+
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Release Purchase Document", 'OnBeforeManualReleasePurchaseDoc', '', false, false)]
+    local procedure CheckUserPurchaseLimit(var PurchaseHeader: Record "Purchase Header")
+    var
+        ApprovalUser: Record "User Setup";
+        AprovalSetupError: Label 'User must have a Purchase Amount Approval Limit setup in Approval User Setup';
+        AboveLimtError: Label 'The value of this order exceeds the allowed amount of %1';
+    begin
+        if ApprovalUser.Get(UserId) then begin
+            if ApprovalUser."Purchase Amount Approval Limit" = 0 then
+                Error(AprovalSetupError);
+            PurchaseHeader.CalcFields(Amount);
+            if PurchaseHeader.Amount > ApprovalUser."Purchase Amount Approval Limit" then begin
+                if not PurchaseHeader."NP Value Approved" then begin
+                    PurchaseHeader."NP Value Held" := true;
+                    PurchaseHeader."NP Value Approved" := false;
+                    PurchaseHeader.Modify();
+                    Commit();
+                    Error(AboveLimtError, ApprovalUser."Purchase Amount Approval Limit");
+                end else
+                    exit;
+            end else begin
+                PurchaseHeader."NP Value Approved" := true;
+                PurchaseHeader."NP Value Held" := false;
+                PurchaseHeader.Modify();
+                Commit();
+            end;
+
         end;
     end;
 

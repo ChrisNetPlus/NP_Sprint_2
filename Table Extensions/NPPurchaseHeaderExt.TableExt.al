@@ -43,5 +43,16 @@ tableextension 50019 "NP Purchase Header Ext" extends "Purchase Header"
             Caption = 'Related Order Numbers';
             DataClassification = CustomerContent;
         }
+        field(50009; "NP Value Held"; Boolean)
+        {
+            Caption = 'Value Held';
+            DataClassification = CustomerContent;
+        }
+        field(50010; "NP Value Approved"; Boolean)
+        {
+            Caption = 'Value Approved';
+            DataClassification = CustomerContent;
+        }
+
     }
 }

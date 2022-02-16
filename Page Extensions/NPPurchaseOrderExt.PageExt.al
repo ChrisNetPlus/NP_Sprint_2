@@ -34,6 +34,21 @@ pageextension 50033 "NP PurchaseOrderExt" extends "Purchase Order"
                 ApplicationArea = All;
                 Visible = EnableCancel;
             }
+            field("NP Value Held"; Rec."NP Value Held")
+            {
+                Caption = 'Value Held';
+                ToolTip = 'Value Held';
+                ApplicationArea = All;
+                Editable = false;
+            }
+            field("NP Value Approved"; Rec."NP Value Approved")
+            {
+                Caption = 'Value Approved';
+                ToolTip = 'Value Approved';
+                ApplicationArea = All;
+                Editable = false;
+            }
+
         }
     }
     actions
@@ -74,6 +89,29 @@ pageextension 50033 "NP PurchaseOrderExt" extends "Purchase Order"
                 begin
                     if Confirm(ConfirmLabel, false) then
                         OrderCancelCU.UnCancelPurchaseOrder(Rec);
+                end;
+            }
+            action("NP Approve Value")
+            {
+                Image = Approval;
+                Caption = 'Approve Value';
+                ToolTip = 'This will the purchase order';
+                ApplicationArea = All;
+                Promoted = true;
+                Visible = true;
+
+                trigger OnAction()
+                var
+                    UserSetup: Record "User Setup";
+                    NotAllowed: Label 'You are not allowed to approve an order';
+                begin
+                    UserSetup.Get(UserId);
+                    if UserSetup."Unlimited Purchase Approval" then begin
+                        Rec."NP Value Approved" := true;
+                        Rec."NP Value Held" := false;
+                        Rec.Modify();
+                    end else
+                        Error(NotAllowed);
                 end;
             }
 
