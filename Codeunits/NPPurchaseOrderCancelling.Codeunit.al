@@ -171,7 +171,7 @@ codeunit 50203 "NP PurchaseOrderCancelling"
         EmailCU: Codeunit Email;
         EmailMessage: Codeunit "Email Message";
         EmailSubject: Label 'Purchase Order Approval Required - ';
-        EmailBody: Label 'An order requires your approval';
+        EmailBody: Label 'An order requires your approval. Requested by ';
         User: Record User;
     begin
         if ApprovalUser.Get(UserId) then begin
@@ -185,7 +185,7 @@ codeunit 50203 "NP PurchaseOrderCancelling"
                     PurchaseHeader.Modify();
                     User.SetRange("User Name", ApprovalUser."Approver ID");
                     if User.FindFirst() then begin
-                        EmailMessage.Create(User."Contact Email", EmailSubject + PurchaseHeader."No.", EmailBody);
+                        EmailMessage.Create(User."Contact Email", EmailSubject + PurchaseHeader."No.", EmailBody + ApprovalUser."User ID");
                         EmailCU.Send(EmailMessage);
                     end;
                     Error(AboveLimtError, ApprovalUser."Purchase Amount Approval Limit");
