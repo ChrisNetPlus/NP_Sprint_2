@@ -128,21 +128,23 @@ pageextension 50033 "NP PurchaseOrderExt" extends "Purchase Order"
         }
         modify(Print)
         {
-            Visible = EnablePrint;
+            Visible = true;
         }
         modify("&Print")
         {
-            Visible = EnablePrint;
+            Visible = true;
         }
         modify(AttachAsPDF)
         {
-            Visible = EnablePrint;
+            Visible = true;
         }
         modify(SendCustom)
         {
-            Visible = EnablePrint;
+            Visible = true;
         }
     }
+
+
     trigger OnOpenPage()
     var
         PurchPayablesSetup: Record "Purchases & Payables Setup";
@@ -150,12 +152,6 @@ pageextension 50033 "NP PurchaseOrderExt" extends "Purchase Order"
         PurchPayablesSetup.Get();
         if PurchPayablesSetup."Enable PO Cancelling" then
             EnableCancel := true;
-        if PurchPayablesSetup."NP Disallow PO Print" then begin
-            if Rec.Status <> Rec.Status::Released then
-                EnablePrint := false
-            else
-                EnablePrint := true;
-        end;
     end;
 
     var

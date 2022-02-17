@@ -75,6 +75,7 @@ codeunit 50203 "NP PurchaseOrderCancelling"
         AlreadyCancelled: Label 'This Order is Not Cancelled';
         PurchPayablesSetup: Record "Purchases & Payables Setup";
     begin
+        PurchPayablesSetup.Get();
         if not PurchPayablesSetup."Enable PO Cancelling" then
             exit;
         if not PurchaseHeader."NP Cancelled" then
@@ -167,6 +168,11 @@ codeunit 50203 "NP PurchaseOrderCancelling"
         ApprovalUser: Record "User Setup";
         AprovalSetupError: Label 'User must have a Purchase Amount Approval Limit setup in Approval User Setup';
         AboveLimtError: Label 'The value of this order exceeds the allowed amount of %1';
+        EmailCU: Codeunit Email;
+        EmailMessage: Codeunit "Email Message";
+        EmailSubject: Label 'Purchase Order Approval Required - ';
+        EmailBody: Label 'An order requires your approval';
+        User: Record User;
     begin
         if ApprovalUser.Get(UserId) then begin
             if ApprovalUser."Purchase Amount Approval Limit" = 0 then
@@ -177,7 +183,11 @@ codeunit 50203 "NP PurchaseOrderCancelling"
                     PurchaseHeader."NP Value Held" := true;
                     PurchaseHeader."NP Value Approved" := false;
                     PurchaseHeader.Modify();
-                    Commit();
+                    User.SetRange("User Name", ApprovalUser."Approver ID");
+                    if User.FindFirst() then begin
+                        EmailMessage.Create(User."Contact Email", EmailSubject + PurchaseHeader."No.", EmailBody);
+                        EmailCU.Send(EmailMessage);
+                    end;
                     Error(AboveLimtError, ApprovalUser."Purchase Amount Approval Limit");
                 end else
                     exit;
@@ -191,4 +201,19 @@ codeunit 50203 "NP PurchaseOrderCancelling"
         end;
     end;
 
+    [EventSubscriber(ObjectType::Table, Database::"Purchase Header", 'OnPrintRecordsOnAfterCheckMixedDropShipment', '', false, false)]
+    local procedure CheckPrint(var PurchaseHeader: Record "Purchase Header")
+    var
+        PurchPayablesSetup: Record "Purchases & Payables Setup";
+        PrintError: Label 'The order must be released!';
+    begin
+        PurchPayablesSetup.Get();
+        if PurchaseHeader."Document Type" <> PurchaseHeader."Document Type"::Order then
+            exit;
+        if PurchPayablesSetup."NP Disallow PO Print" then begin
+            if PurchaseHeader.Status <> PurchaseHeader.Status::Released then
+                Error(PrintError);
+        end;
+
+    end;
 }
