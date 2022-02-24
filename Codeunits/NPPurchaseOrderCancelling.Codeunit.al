@@ -159,6 +159,25 @@ codeunit 50203 "NP PurchaseOrderCancelling"
             WarehouseEmployee.SetRange("Location Code", Rec."Location Code");
             if not WarehouseEmployee.FindFirst() then
                 Error(WrongLocation);
+            WarehouseEmployee.Reset();
+            WarehouseEmployee.SetRange("Location Code", Rec."New Location Code");
+            if not WarehouseEmployee.FindFirst() then
+                Error(WrongLocation);
+        end;
+    end;
+
+    [EventSubscriber(ObjectType::Table, Database::"Item Journal Line", 'OnAfterValidateEvent', 'New Location Code', false, false)]
+    local procedure CheckAllowedLocationsTo(var Rec: Record "Item Journal Line")
+    var
+        WarehouseEmployee: Record "Warehouse Employee";
+        UserSetup: Record "User Setup";
+        WrongLocation: Label 'This destination is not allowed for your user';
+    begin
+        UserSetup.Get(UserId);
+        if UserSetup."NP Depot Worker" then begin
+            WarehouseEmployee.SetRange("Location Code", Rec."New Location Code");
+            if not WarehouseEmployee.FindFirst() then
+                Error(WrongLocation);
         end;
     end;
 
