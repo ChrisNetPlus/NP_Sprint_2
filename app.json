@@ -16,6 +16,12 @@
       "name": "NetworkPlusGeneral",
       "version": "1.0.0.2",
       "publisher": "Network Plus"
+    },
+    {
+      "id": "279236de-889a-424e-951f-cbc013e1c2a4",
+      "name": "Construction Industry Scheme",
+      "version": "1.0.106.0",
+      "publisher": "KPMG"
     }
   ],
   "screenshots": [],
