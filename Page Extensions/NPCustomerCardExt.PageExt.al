@@ -15,7 +15,12 @@ pageextension 50037 "NP Customer Card Ext" extends "Customer Card"
                 Caption = 'UTR Number';
                 ToolTip = 'UTR Number';
                 ApplicationArea = All;
-
+            }
+            field("NP Credit Controller"; Rec."NP Credit Controller")
+            {
+                Caption = 'Credit Controller';
+                ToolTip = 'Credit Controller';
+                ApplicationArea = All;
             }
         }
     }

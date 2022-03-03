@@ -237,4 +237,18 @@ codeunit 50203 "NP PurchaseOrderCancelling"
 
     end;
 
+    [EventSubscriber(ObjectType::Table, Database::"Sales Header", 'OnAfterValidateEvent', 'Sell-to Customer No.', false, false)]
+    local procedure UpdateCreditController(var Rec: Record "Sales Header")
+    var
+        SalesHeader: Record "Sales Header";
+        Customer: Record Customer;
+    begin
+        if (Rec."Document Type" = Rec."Document Type"::Invoice) or
+        (Rec."Document Type" = Rec."Document Type"::"Credit Memo") then begin
+            Customer.Get(Rec."Sell-to Customer No.");
+            SalesHeader.Get(Rec."Document Type", Rec."No.");
+            SalesHeader."NP Credit Controller" := Customer."NP Credit Controller";
+            SalesHeader.Modify();
+        end;
+    end;
 }

@@ -12,5 +12,11 @@ tableextension 50023 "NP Customer Ext" extends Customer
             Caption = 'UTR Number';
             DataClassification = CustomerContent;
         }
+        field(50005; "NP Credit Controller"; Code[20])
+        {
+            Caption = 'Credit Controller';
+            DataClassification = CustomerContent;
+            TableRelation = "Salesperson/Purchaser".Code;
+        }
     }
 }

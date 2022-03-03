@@ -11,6 +11,13 @@ pageextension 50031 "NP Sales Invoice Ext" extends "Sales Invoice"
                 ToolTip = 'Amend Posting No. Here';
                 Editable = true;
             }
+            field("NP Credit Controller"; Rec."NP Credit Controller")
+            {
+                ApplicationArea = All;
+                Caption = 'Credit Controller';
+                ToolTip = 'Credit Controller';
+                Editable = false;
+            }
         }
     }
 }

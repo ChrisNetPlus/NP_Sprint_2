@@ -11,7 +11,13 @@ pageextension 50032 "NP Sales Credit Memo Ext" extends "Sales Credit Memo"
                 ToolTip = 'Amend Posting No. Here';
                 Editable = true;
             }
-
+            field("NP Credit Controller"; Rec."NP Credit Controller")
+            {
+                ApplicationArea = All;
+                Caption = 'Credit Controller';
+                ToolTip = 'Credit Controller';
+                Editable = false;
+            }
         }
     }
 }
