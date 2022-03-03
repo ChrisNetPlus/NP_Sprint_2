@@ -194,6 +194,8 @@ codeunit 50203 "NP PurchaseOrderCancelling"
         User: Record User;
     begin
         if ApprovalUser.Get(UserId) then begin
+            IF ApprovalUser."Unlimited Purchase Approval" then
+                exit;
             if ApprovalUser."Purchase Amount Approval Limit" = 0 then
                 Error(AprovalSetupError);
             PurchaseHeader.CalcFields(Amount);
@@ -216,7 +218,6 @@ codeunit 50203 "NP PurchaseOrderCancelling"
                 PurchaseHeader.Modify();
                 Commit();
             end;
-
         end;
     end;
 
@@ -236,44 +237,4 @@ codeunit 50203 "NP PurchaseOrderCancelling"
 
     end;
 
-    // [EventSubscriber(ObjectType::Table, Database::"Gen. Journal Line", 'OnAfterModifyEvent', '', false, false)]
-    // local procedure UpdateCISAmount(var Rec: Record "Gen. Journal Line")
-    // var
-    //     JournalType: Label 'PAYMENTS';
-    //     Vendor: Record Vendor;
-    //     VendorLedgerEntry: Record "Vendor Ledger Entry";
-    //     CISGrossAmount: Decimal;
-    //     VATEntry: Record "VAT Entry";
-    //     AmountExcVAT: Decimal;
-    // begin
-    //     Clear(CISGrossAmount);
-    //     if Rec."Journal Template Name" <> JournalType then
-    //         exit;
-    //     if Rec."Account Type" <> Rec."Account Type"::Vendor then
-    //         exit;
-    //     Vendor.Get(Rec."Account No.");
-    //     if Vendor."CIS Include on CIS Return" then begin
-    //         if Vendor."CIS Withholding Tax Rate" = 0 then begin
-    //             VendorLedgerEntry.SetRange("Applies-to ID", Rec."Applies-to ID");
-    //             if VendorLedgerEntry.FindSet() then
-    //                 repeat
-    //                     VATEntry.Reset();
-    //                     VATEntry.SetRange("Document No.", VendorLedgerEntry."Document No.");
-    //                     if VATEntry.FindSet() then
-    //                         repeat
-    //                             AmountExcVAT := AmountExcVAT + VATEntry.Base;
-    //                         until VATEntry.Next() = 0;
-    //                     CISGrossAmount += AmountExcVAT;
-    //                 until VendorLedgerEntry.Next() = 0;
-    //         end else begin
-    //             VendorLedgerEntry.SetRange("Applies-to ID", Rec."Applies-to ID");
-    //             if VendorLedgerEntry.FindSet() then
-    //                 repeat
-    //                     CISGrossAmount := Rec.Amount - Rec."CIS Withheld Tax Amount";
-    //                 until VendorLedgerEntry.Next() = 0;
-    //         end;
-    //         if Rec."Applies-to ID" <> '' then
-    //             Rec.Validate("CIS Gross Amount", CISGrossAmount);
-    //     end;
-    // end;
 }
