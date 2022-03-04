@@ -4,6 +4,13 @@ pageextension 50038 "NP Customer List Ext" extends "Customer List"
     {
         addafter(Contact)
         {
+            field("NP Credit Controller"; Rec."NP Credit Controller")
+            {
+                Caption = 'Credit Controller';
+                ToolTip = 'Credit Controller';
+                ApplicationArea = All;
+
+            }
             field("NP Customer Registration No."; Rec."NP Customer Registration No.")
             {
                 Caption = 'Company Registration No.';

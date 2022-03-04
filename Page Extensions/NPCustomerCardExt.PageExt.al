@@ -2,7 +2,7 @@ pageextension 50037 "NP Customer Card Ext" extends "Customer Card"
 {
     layout
     {
-        addafter("Tax Area Code")
+        addafter("Credit Limit (LCY)")
         {
             field("NP Customer Registration No."; Rec."NP Customer Registration No.")
             {
