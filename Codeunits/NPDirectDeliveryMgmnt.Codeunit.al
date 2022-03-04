@@ -33,7 +33,7 @@ codeunit 50206 "NP Direct Delivery Mgmnt"
                     ItemJournalLine.Validate("Location Code", PurchaseLine."Location Code");
                     ItemJournalLine.Validate("Shortcut Dimension 1 Code", PurchaseLine."Shortcut Dimension 1 Code");
                     ItemJournalLine.Validate("Shortcut Dimension 2 Code", PurchaseLine."Shortcut Dimension 2 Code");
-                    ItemJournalLine.Insert();
+                    ItemJournalLine.Insert();//
                 until PurchaseLine.Next() = 0;
         end;
     end;
